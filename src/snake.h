@@ -8,10 +8,11 @@ class Snake {
  public:
   enum class Direction { kUp, kDown, kLeft, kRight };
 
-  Snake(int grid_width, int grid_height)
+  // head_w_pos is the horizontal position of head propotional to grid_width
+  Snake(int grid_width, int grid_height, float head_w_pos)
       : grid_width(grid_width),
         grid_height(grid_height),
-        head_x(grid_width / 2),
+        head_x(grid_width * head_w_pos),
         head_y(grid_height / 2) {}
 
   void Update();
