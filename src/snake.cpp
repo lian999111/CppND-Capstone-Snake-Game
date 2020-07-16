@@ -23,14 +23,16 @@ void Snake::Update() {
 }
 
 void Snake::CheckAlive(Snake &other_snake) {
-  // May require 2 snakes to be locked, use std::lock to avoid deadlock
+  // Require 2 snakes to be locked, use std::lock to avoid deadlock
   std::lock(mtx_, other_snake.mtx_);
 
-  // Check if the snake collides itself.
   std::lock_guard<std::mutex> lck_self(mtx_, std::adopt_lock);
+  std::lock_guard<std::mutex> lck_other(other_snake.mtx_, std::adopt_lock);
+
   auto current_head_cell_x = static_cast<int>(head_x);
   auto current_head_cell_y = static_cast<int>(head_y);
 
+  // Check if the snake collides itself.
   for (auto const &item : body) {
     if (current_head_cell_x == item.x && current_head_cell_y == item.y) {
       alive = false;
@@ -39,7 +41,6 @@ void Snake::CheckAlive(Snake &other_snake) {
   }
 
   // Check if the snake collides the other
-  std::lock_guard<std::mutex> lck_other(other_snake.mtx_, std::adopt_lock);
   if (other_snake.CheckSnakeCell(current_head_cell_x, current_head_cell_y)) {
     alive = false;
   }
