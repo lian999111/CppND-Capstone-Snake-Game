@@ -66,6 +66,15 @@ void Renderer::Render(const std::array<std::unique_ptr<Snake>, 2> &snakes,
     SDL_RenderFillRect(sdl_renderer, &block);
   }
 
+  // Render snake2's body
+  SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+  for (SDL_Point const &point : snakes[1]->body) {
+    block.x = point.x * block.w;
+    block.y = point.y * block.h;
+    SDL_RenderFillRect(sdl_renderer, &block);
+  }
+
+  // Render heads after bodies so the dead head's red is not overriden by body
   // Render snake1's head
   block.x = static_cast<int>(snakes[0]->head_x) * block.w;
   block.y = static_cast<int>(snakes[0]->head_y) * block.h;
@@ -75,14 +84,6 @@ void Renderer::Render(const std::array<std::unique_ptr<Snake>, 2> &snakes,
     SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0x00, 0x00, 0xFF);
   }
   SDL_RenderFillRect(sdl_renderer, &block);
-
-  // Render snake2's body
-  SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-  for (SDL_Point const &point : snakes[1]->body) {
-    block.x = point.x * block.w;
-    block.y = point.y * block.h;
-    SDL_RenderFillRect(sdl_renderer, &block);
-  }
 
   // Render snake2's head
   block.x = static_cast<int>(snakes[1]->head_x) * block.w;
