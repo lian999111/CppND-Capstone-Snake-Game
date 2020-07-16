@@ -53,7 +53,7 @@ void Renderer::Render(const std::array<std::unique_ptr<Snake>, 2> &snakes,
   SDL_RenderFillRect(sdl_renderer, &block);
 
   // Render food2
-  SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0x99, 0x33, 0xFF);
+  SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0xB2, 0x66, 0xFF);
   block.x = food_nibs[1]->x * block.w;
   block.y = food_nibs[1]->y * block.h;
   SDL_RenderFillRect(sdl_renderer, &block);
@@ -70,7 +70,7 @@ void Renderer::Render(const std::array<std::unique_ptr<Snake>, 2> &snakes,
   block.x = static_cast<int>(snakes[0]->head_x) * block.w;
   block.y = static_cast<int>(snakes[0]->head_y) * block.h;
   if (snakes[0]->alive) {
-    SDL_SetRenderDrawColor(sdl_renderer, 0x00, 0x7A, 0xCC, 0xFF);
+    SDL_SetRenderDrawColor(sdl_renderer, 0x00, 0x66, 0xCC, 0xFF);
   } else {
     SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0x00, 0x00, 0xFF);
   }
@@ -100,7 +100,7 @@ void Renderer::Render(const std::array<std::unique_ptr<Snake>, 2> &snakes,
 
 void Renderer::UpdateWindowTitle(const std::array<int, 2> scores,
                                  const int fps) {
-  std::string title{"P1 Score: " + std::to_string(scores[0]) + "P2 Score: " +
-                    std::to_string(scores[1]) + " FPS: " + std::to_string(fps)};
+  std::string title{"P1 Score: " + std::to_string(scores[0]) + "  P2 Score: " +
+                    std::to_string(scores[1]) + "  FPS: " + std::to_string(fps)};
   SDL_SetWindowTitle(sdl_window, title.c_str());
 }
