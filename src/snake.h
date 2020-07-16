@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "SDL.h"
+#include <mutex>
 
 class Snake {
  public:
@@ -16,9 +17,10 @@ class Snake {
         head_y(grid_height / 2) {}
 
   void Update();
+  void CheckAlive(Snake &other_snake);  // checks if the snake collides itself or other snake
 
   void GrowBody();
-  bool SnakeCell(int x, int y);
+  bool SnakeCell(int x, int y) const;
 
   Direction direction = Direction::kUp;
 
@@ -32,10 +34,16 @@ class Snake {
  private:
   void UpdateHead();
   void UpdateBody(SDL_Point &current_cell, SDL_Point &prev_cell);
+  bool CheckSnakeCell(int x, int y) const;
 
   bool growing{false};
   int grid_width;
   int grid_height;
+
+  // Snakes will be manipulated from different threads
+  // To make Snake thread-safe
+  // mtx_ can be locked in a const function that does read-only stuff
+  mutable std::mutex mtx_;
 };
 
 #endif

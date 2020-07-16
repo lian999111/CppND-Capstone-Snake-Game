@@ -1,6 +1,6 @@
 #include <iostream>
 #include "controller.h"
-#include "game.h"
+#include "game2p.h"
 #include "renderer.h"
 
 int main() {
@@ -13,10 +13,10 @@ int main() {
 
   Renderer renderer(kScreenWidth, kScreenHeight, kGridWidth, kGridHeight);
   Controller controller;
-  Game game(kGridWidth, kGridHeight);
-  game.Run(controller, renderer, kMsPerFrame);
+  Game2P game2p(kGridWidth, kGridHeight);
+  game2p.Run(controller, renderer, kMsPerFrame);
   std::cout << "Game has terminated successfully!\n";
-  std::cout << "Score: " << game.GetScore() << "\n";
-  std::cout << "Size: " << game.GetSize() << "\n";
+  std::cout << "Score: " << game2p.GetScore() << "\n";
+  std::cout << "Size: " << game2p.GetSize() << "\n";
   return 0;
 }
