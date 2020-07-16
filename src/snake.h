@@ -17,7 +17,7 @@ class Snake {
         head_y(grid_height / 2) {}
 
   void Update();
-  void CheckAlive(Snake &other_snake);  // checks if the snake collides itself or other snake
+  bool CheckAlive(const Snake &other_snake);  // checks if the snake collides itself or other snake
 
   void GrowBody();
   bool SnakeCell(int x, int y) const;

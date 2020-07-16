@@ -22,7 +22,7 @@ void Snake::Update() {
   }
 }
 
-void Snake::CheckAlive(Snake &other_snake) {
+bool Snake::CheckAlive(const Snake &other_snake) {
   // Require 2 snakes to be locked, use std::lock to avoid deadlock
   std::lock(mtx_, other_snake.mtx_);
 
@@ -36,14 +36,17 @@ void Snake::CheckAlive(Snake &other_snake) {
   for (auto const &item : body) {
     if (current_head_cell_x == item.x && current_head_cell_y == item.y) {
       alive = false;
-      return;
+      return false;
     }
   }
 
   // Check if the snake collides the other
   if (other_snake.CheckSnakeCell(current_head_cell_x, current_head_cell_y)) {
     alive = false;
+    return false;
   }
+
+  return true;
 }
 
 void Snake::GrowBody() { 
