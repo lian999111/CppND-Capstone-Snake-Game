@@ -42,7 +42,7 @@ class Snake {
 
   // Snakes will be manipulated from different threads
   // To make Snake thread-safe
-  // mtx_ can be locked in a const function that does read-only stuff
+  // mutable because mtx_ can be locked in a const function that does read-only stuff
   mutable std::mutex mtx_;
 };
 
