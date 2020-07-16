@@ -1,16 +1,21 @@
 #include "game2p.h"
 #include "SDL.h"
 #include <exception>
-#include <iostream>
 #include <future>
+#include <iostream>
 
 Game2P::Game2P(std::size_t grid_width, std::size_t grid_height)
-    : snake1(grid_width, grid_height, 0.33),
-      snake2(grid_width, grid_height, 0.66), engine(dev()),
-      random_w(0, static_cast<int>(grid_width-1)),
-      random_h(0, static_cast<int>(grid_height-1)) {
-  PlaceFood1();
-  PlaceFood2();
+    : engine(dev()), random_w(0, static_cast<int>(grid_width - 1)),
+      random_h(0, static_cast<int>(grid_height - 1)) {
+  // Initialize snakes
+  snakes[0] = std::make_unique<Snake>(grid_width, grid_height, 0.66);
+  snakes[1] = std::make_unique<Snake>(grid_width, grid_height, 0.33);
+  // Initialize food_nibs with ptrs to a default SDL_Point
+  food_nibs[0] = std::make_unique<SDL_Point>();
+  food_nibs[1] = std::make_unique<SDL_Point>();
+  // Place food nibs
+  PlaceFood(0);
+  PlaceFood(1);
 }
 
 void Game2P::Run(Controller const &controller, Renderer &renderer,
@@ -26,15 +31,15 @@ void Game2P::Run(Controller const &controller, Renderer &renderer,
     frame_start = SDL_GetTicks();
 
     // Input, Update, Render - the main game loop.
-    controller.HandleInput(running, snake1, snake2);
+    controller.HandleInput(running, snakes);
 
     // Create 2 tasks to update snakes and wait for them to finish
-    auto ftr1 = std::async(std::launch::async, &Game2P::UpdateSnake1, this);
-    auto ftr2 = std::async(std::launch::async, &Game2P::UpdateSnake2, this);
+    auto ftr1 = std::async(std::launch::async, &Game2P::UpdateSnake, this, 0);
+    auto ftr2 = std::async(std::launch::async, &Game2P::UpdateSnake, this, 1);
     ftr1.wait();
     ftr2.wait();
 
-    renderer.Render(snake1, snake2, food1, food2);
+    renderer.Render(snakes, food_nibs);
 
     frame_end = SDL_GetTicks();
 
@@ -45,7 +50,7 @@ void Game2P::Run(Controller const &controller, Renderer &renderer,
 
     // After every second, update the window title.
     if (frame_end - title_timestamp >= 1000) {
-      renderer.UpdateWindowTitle(score1, frame_count);
+      renderer.UpdateWindowTitle(scores, frame_count);
       frame_count = 0;
       title_timestamp = frame_end;
     }
@@ -59,50 +64,32 @@ void Game2P::Run(Controller const &controller, Renderer &renderer,
   }
 }
 
-void Game2P::UpdateSnake1() {
-  
-  if (!snake1.alive)
+void Game2P::UpdateSnake(int idx) {
+
+  if (!snakes[idx]->alive)
     return;
 
-  snake1.Update();
-  snake1.CheckAlive(snake2);
+  int other_idx = 1 - idx;
+  snakes[idx]->Update();
+  snakes[idx]->CheckAlive(
+      *snakes[other_idx]); // pass the raw ptr held by unique_ptr
 
-  int new_x = static_cast<int>(snake1.head_x);
-  int new_y = static_cast<int>(snake1.head_y);
+  int new_x = static_cast<int>(snakes[idx]->head_x);
+  int new_y = static_cast<int>(snakes[idx]->head_y);
 
   // Check if there's food over here
-  if (food1.x == new_x && food1.y == new_y) {
-    score1++;
-    PlaceFood1();
+  if (food_nibs[idx]->x == new_x && food_nibs[idx]->y == new_y) {
+    scores[idx]++;
+    PlaceFood(idx);
     // Grow snake and increase speed.
-    snake1.GrowBody();
-    snake1.speed += 0.02;
+    snakes[idx]->GrowBody();
+    snakes[idx]->speed += 0.02;
   }
 }
 
-void Game2P::UpdateSnake2() {
-  
-  if (!snake2.alive)
-    return;
-
-  snake2.Update();
-  snake2.CheckAlive(snake1);
-
-  int new_x = static_cast<int>(snake2.head_x);
-  int new_y = static_cast<int>(snake2.head_y);
-
-  // Check if there's food over here
-  if (food2.x == new_x && food2.y == new_y) {
-    score2++;
-    PlaceFood2();
-    // Grow snake and increase speed.
-    snake2.GrowBody();
-    snake2.speed += 0.02;
-  }
-}
-
-void Game2P::PlaceFood1() {
+void Game2P::PlaceFood(int idx) {
   int x, y;
+  int other_idx = 1 - idx;
 
   while (true) {
     x = random_w(engine);
@@ -110,30 +97,14 @@ void Game2P::PlaceFood1() {
 
     // Check that the location is neither occupied by both snakes item nor by
     // the other food before placing food.
-    if (!snake1.SnakeCell(x, y) && !snake2.SnakeCell(x, y) && (x != food2.x || y != food2.y)) {
-      food1.x = x;
-      food1.y = y;
+    if (!snakes[0]->SnakeCell(x, y) && !snakes[1]->SnakeCell(x, y) &&
+        (x != food_nibs.at(other_idx)->x || y != food_nibs.at(other_idx)->y)) {
+      food_nibs[idx]->x = x;
+      food_nibs[idx]->y = y;
       return;
     }
   }
 }
 
-void Game2P::PlaceFood2() {
-  int x, y;
-
-  while (true) {
-    x = random_w(engine);
-    y = random_h(engine);
-
-    // Check that the location is neither occupied by both snakes item nor by
-    // the other food before placing food.
-    if (!snake1.SnakeCell(x, y) && !snake2.SnakeCell(x, y) && (x != food1.x || y != food1.y)) {
-      food2.x = x;
-      food2.y = y;
-      return;
-    }
-  }
-}
-
-int Game2P::GetScore() const { return score1; }
-int Game2P::GetSize() const { return snake1.size; }
+int Game2P::GetScore(int idx) const { return scores[idx]; }
+int Game2P::GetSize(int idx) const { return snakes[idx]->size; }

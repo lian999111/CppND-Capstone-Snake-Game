@@ -2,10 +2,12 @@
 #define CONTROLLER_H
 
 #include "snake.h"
+#include <array>
+#include <memory>
 
 class Controller {
  public:
-  void HandleInput(bool &running, Snake &snake1, Snake &snake2) const;
+  void HandleInput(bool &running, std::array<std::unique_ptr<Snake>, 2> &snakes) const;
 
  private:
   void ChangeDirection(Snake &snake, Snake::Direction input,

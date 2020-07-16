@@ -5,10 +5,8 @@
 Renderer::Renderer(const std::size_t screen_width,
                    const std::size_t screen_height,
                    const std::size_t grid_width, const std::size_t grid_height)
-    : screen_width(screen_width),
-      screen_height(screen_height),
-      grid_width(grid_width),
-      grid_height(grid_height) {
+    : screen_width(screen_width), screen_height(screen_height),
+      grid_width(grid_width), grid_height(grid_height) {
   // Initialize SDL
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
     std::cerr << "SDL could not initialize.\n";
@@ -38,7 +36,8 @@ Renderer::~Renderer() {
   SDL_Quit();
 }
 
-void Renderer::Render(Snake const &snake1, Snake const &snake2, SDL_Point const &food1, SDL_Point const &food2) {
+void Renderer::Render(const std::array<std::unique_ptr<Snake>, 2> &snakes,
+                      const std::array<std::unique_ptr<SDL_Point>, 2> &food_nibs) {
   SDL_Rect block;
   block.w = screen_width / grid_width;
   block.h = screen_height / grid_height;
@@ -48,48 +47,48 @@ void Renderer::Render(Snake const &snake1, Snake const &snake2, SDL_Point const 
   SDL_RenderClear(sdl_renderer);
 
   // Render food1
-  SDL_SetRenderDrawColor(sdl_renderer, 0x00, 0xCC, 0x00, 0xFF);
-  block.x = food1.x * block.w;
-  block.y = food1.y * block.h;
+  SDL_SetRenderDrawColor(sdl_renderer, 0x99, 0xCC, 0xFF, 0xFF);
+  block.x = food_nibs[0]->x * block.w;
+  block.y = food_nibs[0]->y * block.h;
   SDL_RenderFillRect(sdl_renderer, &block);
 
   // Render food2
-  SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0xCC, 0x00, 0xFF);
-  block.x = food2.x * block.w;
-  block.y = food2.y * block.h;
+  SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0x99, 0x33, 0xFF);
+  block.x = food_nibs[1]->x * block.w;
+  block.y = food_nibs[1]->y * block.h;
   SDL_RenderFillRect(sdl_renderer, &block);
 
   // Render snake1's body
   SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-  for (SDL_Point const &point : snake1.body) {
+  for (SDL_Point const &point : snakes[0]->body) {
     block.x = point.x * block.w;
     block.y = point.y * block.h;
     SDL_RenderFillRect(sdl_renderer, &block);
   }
 
   // Render snake1's head
-  block.x = static_cast<int>(snake1.head_x) * block.w;
-  block.y = static_cast<int>(snake1.head_y) * block.h;
-  if (snake1.alive) {
+  block.x = static_cast<int>(snakes[0]->head_x) * block.w;
+  block.y = static_cast<int>(snakes[0]->head_y) * block.h;
+  if (snakes[0]->alive) {
     SDL_SetRenderDrawColor(sdl_renderer, 0x00, 0x7A, 0xCC, 0xFF);
   } else {
     SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0x00, 0x00, 0xFF);
   }
   SDL_RenderFillRect(sdl_renderer, &block);
 
-    // Render snake2's body
+  // Render snake2's body
   SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-  for (SDL_Point const &point : snake2.body) {
+  for (SDL_Point const &point : snakes[1]->body) {
     block.x = point.x * block.w;
     block.y = point.y * block.h;
     SDL_RenderFillRect(sdl_renderer, &block);
   }
 
   // Render snake2's head
-  block.x = static_cast<int>(snake2.head_x) * block.w;
-  block.y = static_cast<int>(snake2.head_y) * block.h;
-  if (snake2.alive) {
-    SDL_SetRenderDrawColor(sdl_renderer, 0x00, 0x7A, 0xCC, 0xFF);
+  block.x = static_cast<int>(snakes[1]->head_x) * block.w;
+  block.y = static_cast<int>(snakes[1]->head_y) * block.h;
+  if (snakes[1]->alive) {
+    SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0x80, 0x00, 0xFF);
   } else {
     SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0x00, 0x00, 0xFF);
   }
@@ -99,7 +98,9 @@ void Renderer::Render(Snake const &snake1, Snake const &snake2, SDL_Point const 
   SDL_RenderPresent(sdl_renderer);
 }
 
-void Renderer::UpdateWindowTitle(int score, int fps) {
-  std::string title{"Snake Score: " + std::to_string(score) + " FPS: " + std::to_string(fps)};
+void Renderer::UpdateWindowTitle(const std::array<int, 2> scores,
+                                 const int fps) {
+  std::string title{"P1 Score: " + std::to_string(scores[0]) + "P2 Score: " +
+                    std::to_string(scores[1]) + " FPS: " + std::to_string(fps)};
   SDL_SetWindowTitle(sdl_window, title.c_str());
 }

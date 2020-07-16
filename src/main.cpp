@@ -16,7 +16,9 @@ int main() {
   Game2P game2p(kGridWidth, kGridHeight);
   game2p.Run(controller, renderer, kMsPerFrame);
   std::cout << "Game has terminated successfully!\n";
-  std::cout << "Score: " << game2p.GetScore() << "\n";
-  std::cout << "Size: " << game2p.GetSize() << "\n";
+  std::cout << "1P Score: " << game2p.GetScore(0) << "\n";
+  std::cout << "1P Size: " << game2p.GetSize(0) << "\n";
+  std::cout << "2P Score: " << game2p.GetScore(1) << "\n";
+  std::cout << "2P Size: " << game2p.GetSize(1) << "\n";
   return 0;
 }
