@@ -34,10 +34,15 @@ void Game2P::Run(Controller const &controller, Renderer &renderer,
     controller.HandleInput(running, snakes);
 
     // Create 2 tasks to update snakes and wait for them to finish
-    auto ftr1 = std::async(std::launch::async, &Game2P::UpdateSnake, this, 0);
-    auto ftr2 = std::async(std::launch::async, &Game2P::UpdateSnake, this, 1);
-    ftr1.wait();
-    ftr2.wait();
+    auto ftr_move1 = std::async(std::launch::async, &Game2P::MoveSnake, this, 0);
+    auto ftr_move2 = std::async(std::launch::async, &Game2P::MoveSnake, this, 1);
+    ftr_move1.wait();
+    ftr_move2.wait();
+
+    auto ftr_update1 = std::async(std::launch::async, &Game2P::UpdateSnakeState, this, 0);
+    auto ftr_update2 = std::async(std::launch::async, &Game2P::UpdateSnakeState, this, 1);
+    ftr_update1.wait();
+    ftr_update2.wait();
 
     renderer.Render(snakes, food_nibs);
 
@@ -64,15 +69,20 @@ void Game2P::Run(Controller const &controller, Renderer &renderer,
   }
 }
 
-void Game2P::UpdateSnake(int idx) {
+void Game2P::MoveSnake(int idx) {
 
   if (!snakes[idx]->alive)
     return;
 
   int other_idx = 1 - idx;
   snakes[idx]->Update();
-  snakes[idx]->CheckAlive(
-      *snakes[other_idx]); // pass the raw ptr held by unique_ptr
+}
+
+void Game2P::UpdateSnakeState(int idx) {
+  int other_idx = 1 - idx;
+  if (!snakes[idx]->CheckAlive(*snakes[other_idx])) {
+    return;
+  };
 
   int new_x = static_cast<int>(snakes[idx]->head_x);
   int new_y = static_cast<int>(snakes[idx]->head_y);

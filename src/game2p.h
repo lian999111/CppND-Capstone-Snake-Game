@@ -29,7 +29,8 @@ private:
 
   std::array<int, 2> scores{{0}};
 
-  void UpdateSnake(int idx);
+  void MoveSnake(int idx);
+  void UpdateSnakeState(int idx);
   void PlaceFood(int idx);
 };
 
