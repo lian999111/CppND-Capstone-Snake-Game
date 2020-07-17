@@ -5,10 +5,8 @@
 Renderer::Renderer(const std::size_t screen_width,
                    const std::size_t screen_height,
                    const std::size_t grid_width, const std::size_t grid_height)
-    : screen_width(screen_width),
-      screen_height(screen_height),
-      grid_width(grid_width),
-      grid_height(grid_height) {
+    : screen_width(screen_width), screen_height(screen_height),
+      grid_width(grid_width), grid_height(grid_height) {
   // Initialize SDL
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
     std::cerr << "SDL could not initialize.\n";
@@ -31,14 +29,41 @@ Renderer::Renderer(const std::size_t screen_width,
     std::cerr << "Renderer could not be created.\n";
     std::cerr << "SDL_Error: " << SDL_GetError() << "\n";
   }
+
+  // Initialize SDL_TTF
+  if (TTF_Init() == -1) {
+    std::cerr << "SDL_TTF could not initialize.\n";
+    std::cerr << "SDL_TTF Error: " << TTF_GetError() << "\n";
+  }
+
+  // Initialize pause_msg
+  TTF_Font *font = TTF_OpenFont("../font/OpenSans-Regular.ttf", 200);
+  if (nullptr == font) {
+    std::cerr << "SDL Font could not loaded.\n";
+    std::cerr << "TTF_Error: " << TTF_GetError() << "\n";
+  }
+
+  SDL_Color white = {255, 255, 255};
+  SDL_Surface *surface_msg = TTF_RenderText_Solid(font, "Pause", white);
+  pause_msg = SDL_CreateTextureFromSurface(sdl_renderer, surface_msg);
+
+  // We get the message now -> free surface and close font
+  SDL_FreeSurface(surface_msg);
+  TTF_CloseFont(font);
 }
 
 Renderer::~Renderer() {
   SDL_DestroyWindow(sdl_window);
+  SDL_DestroyRenderer(sdl_renderer);
   SDL_Quit();
+
+  SDL_DestroyTexture(pause_msg);
+  TTF_Quit();
 }
 
-void Renderer::Render(Snake const snake, SDL_Point const &food) {
+void Renderer::Render(
+    const std::array<std::unique_ptr<Snake>, 2> &snakes,
+    const std::array<std::unique_ptr<SDL_Point>, 2> &food_nibs) {
   SDL_Rect block;
   block.w = screen_width / grid_width;
   block.h = screen_height / grid_height;
@@ -47,25 +72,50 @@ void Renderer::Render(Snake const snake, SDL_Point const &food) {
   SDL_SetRenderDrawColor(sdl_renderer, 0x1E, 0x1E, 0x1E, 0xFF);
   SDL_RenderClear(sdl_renderer);
 
-  // Render food
-  SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0xCC, 0x00, 0xFF);
-  block.x = food.x * block.w;
-  block.y = food.y * block.h;
+  // Render food1
+  SDL_SetRenderDrawColor(sdl_renderer, 0x99, 0xCC, 0xFF, 0xFF);
+  block.x = food_nibs[0]->x * block.w;
+  block.y = food_nibs[0]->y * block.h;
   SDL_RenderFillRect(sdl_renderer, &block);
 
-  // Render snake's body
+  // Render food2
+  SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0xB2, 0x66, 0xFF);
+  block.x = food_nibs[1]->x * block.w;
+  block.y = food_nibs[1]->y * block.h;
+  SDL_RenderFillRect(sdl_renderer, &block);
+
+  // Render snake1's body
   SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-  for (SDL_Point const &point : snake.body) {
+  for (SDL_Point const &point : snakes[0]->body) {
     block.x = point.x * block.w;
     block.y = point.y * block.h;
     SDL_RenderFillRect(sdl_renderer, &block);
   }
 
-  // Render snake's head
-  block.x = static_cast<int>(snake.head_x) * block.w;
-  block.y = static_cast<int>(snake.head_y) * block.h;
-  if (snake.alive) {
-    SDL_SetRenderDrawColor(sdl_renderer, 0x00, 0x7A, 0xCC, 0xFF);
+  // Render snake2's body
+  SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+  for (SDL_Point const &point : snakes[1]->body) {
+    block.x = point.x * block.w;
+    block.y = point.y * block.h;
+    SDL_RenderFillRect(sdl_renderer, &block);
+  }
+
+  // Render heads after bodies so the dead head's red is not overriden by body
+  // Render snake1's head
+  block.x = static_cast<int>(snakes[0]->head_x) * block.w;
+  block.y = static_cast<int>(snakes[0]->head_y) * block.h;
+  if (snakes[0]->alive) {
+    SDL_SetRenderDrawColor(sdl_renderer, 0x00, 0x66, 0xCC, 0xFF);
+  } else {
+    SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0x00, 0x00, 0xFF);
+  }
+  SDL_RenderFillRect(sdl_renderer, &block);
+
+  // Render snake2's head
+  block.x = static_cast<int>(snakes[1]->head_x) * block.w;
+  block.y = static_cast<int>(snakes[1]->head_y) * block.h;
+  if (snakes[1]->alive) {
+    SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0x80, 0x00, 0xFF);
   } else {
     SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0x00, 0x00, 0xFF);
   }
@@ -75,7 +125,21 @@ void Renderer::Render(Snake const snake, SDL_Point const &food) {
   SDL_RenderPresent(sdl_renderer);
 }
 
-void Renderer::UpdateWindowTitle(int score, int fps) {
-  std::string title{"Snake Score: " + std::to_string(score) + " FPS: " + std::to_string(fps)};
+void Renderer::UpdateWindowTitle(const std::array<int, 2> scores,
+                                 const int fps) {
+  std::string title{"P1 Score: " + std::to_string(scores[0]) + "  P2 Score: " +
+                    std::to_string(scores[1]) + "  FPS: " +
+                    std::to_string(fps)};
   SDL_SetWindowTitle(sdl_window, title.c_str());
+}
+
+void Renderer::RenderPause() {
+    SDL_Rect msg_rect; // create a rect
+    msg_rect.x = 220;  // controls the rect's x coordinate
+    msg_rect.y = 270;  // controls the rect's y coordinte
+    msg_rect.w = 200;  // controls the width of the rect
+    msg_rect.h = 100;  // controls the height of the rect
+
+    SDL_RenderCopy(sdl_renderer, pause_msg, NULL, &msg_rect);
+    SDL_RenderPresent(sdl_renderer);
 }
