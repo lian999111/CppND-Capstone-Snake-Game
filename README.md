@@ -77,6 +77,7 @@ Controls the flow of the game and maintains the 2 snakes and their foods. The "R
 * The project makes use of references in function declarations. (e.g. [snake.cpp](https://github.com/lian999111/CppND-Capstone-Snake-Game/blob/master/src/snake.cpp#L25), [controller.cpp](https://github.com/lian999111/CppND-Capstone-Snake-Game/blob/master/src/controller.cpp#L13-L15))
 * The project uses destructors appropriately. (e.g. [renderer.cpp](https://github.com/lian999111/CppND-Capstone-Snake-Game/blob/master/src/renderer.cpp#L41-L47), [sdlfont.cpp](https://github.com/lian999111/CppND-Capstone-Snake-Game/blob/master/src/sdlfont.cpp#L15-L18))
 * The project uses scope / Resource Acquisition Is Initialization (RAII) where appropriate. (e.g. [sdlfont.h](https://github.com/lian999111/CppND-Capstone-Snake-Game/blob/master/src/sdlfont.h), [sdlfont.cpp](https://github.com/lian999111/CppND-Capstone-Snake-Game/blob/master/src/sdlfont.cpp))
+* The project follows the Rule of 5. (see [sdlfont.h](https://github.com/lian999111/CppND-Capstone-Snake-Game/blob/master/src/sdlfont.h), [sdlfont.h](https://github.com/lian999111/CppND-Capstone-Snake-Game/blob/master/src/sdlfont.cpp))
 * The project uses smart pointers instead of raw pointers. (see [game2p.h](https://github.com/lian999111/CppND-Capstone-Snake-Game/blob/master/src/game2p.h#L22-L23), [game2p.cpp](https://github.com/lian999111/CppND-Capstone-Snake-Game/blob/master/src/game2p.cpp#L11-L15))
 
 ### Concurrency
