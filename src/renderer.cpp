@@ -39,7 +39,7 @@ Renderer::Renderer(const std::size_t screen_width,
   // Initialize pause_msg
   TTF_Font *font = TTF_OpenFont("../font/OpenSans-Regular.ttf", 200);
   if (nullptr == font) {
-    std::cerr << "SDL Font could not loaded.\n";
+    std::cerr << "SDL Font could not be loaded.\n";
     std::cerr << "TTF_Error: " << TTF_GetError() << "\n";
   }
 
@@ -143,3 +143,4 @@ void Renderer::RenderPause() {
     SDL_RenderCopy(sdl_renderer, pause_msg, NULL, &msg_rect);
     SDL_RenderPresent(sdl_renderer);
 }
+
