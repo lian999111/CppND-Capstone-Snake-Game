@@ -7,7 +7,7 @@
 
 class Controller {
  public:
-  void HandleInput(bool &running, std::array<std::unique_ptr<Snake>, 2> &snakes) const;
+  void HandleInput(bool &running, std::array<std::unique_ptr<Snake>, 2> &snakes, bool &is_paused) const;
 
  private:
   void ChangeDirection(Snake &snake, Snake::Direction input,

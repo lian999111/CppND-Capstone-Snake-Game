@@ -31,20 +31,28 @@ void Game2P::Run(Controller const &controller, Renderer &renderer,
     frame_start = SDL_GetTicks();
 
     // Input, Update, Render - the main game loop.
-    controller.HandleInput(running, snakes);
+    controller.HandleInput(running, snakes, is_paused);
 
-    // Create 2 tasks to update snakes and wait for them to finish
-    auto ftr_move1 = std::async(std::launch::async, &Game2P::MoveSnake, this, 0);
-    auto ftr_move2 = std::async(std::launch::async, &Game2P::MoveSnake, this, 1);
-    ftr_move1.wait();
-    ftr_move2.wait();
+    if (is_paused) {
+      renderer.RenderPause();
+    } else {
+      // Create 2 tasks to update snakes and wait for them to finish
+      auto ftr_move1 =
+          std::async(std::launch::async, &Game2P::MoveSnake, this, 0);
+      auto ftr_move2 =
+          std::async(std::launch::async, &Game2P::MoveSnake, this, 1);
+      ftr_move1.wait();
+      ftr_move2.wait();
 
-    auto ftr_update1 = std::async(std::launch::async, &Game2P::UpdateSnakeState, this, 0);
-    auto ftr_update2 = std::async(std::launch::async, &Game2P::UpdateSnakeState, this, 1);
-    ftr_update1.wait();
-    ftr_update2.wait();
+      auto ftr_update1 =
+          std::async(std::launch::async, &Game2P::UpdateSnakeState, this, 0);
+      auto ftr_update2 =
+          std::async(std::launch::async, &Game2P::UpdateSnakeState, this, 1);
+      ftr_update1.wait();
+      ftr_update2.wait();
 
-    renderer.Render(snakes, food_nibs);
+      renderer.Render(snakes, food_nibs);
+    }
 
     frame_end = SDL_GetTicks();
 

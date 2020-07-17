@@ -20,7 +20,7 @@ public:
 private:
   // Fixed to 2 snakes and 2 food nibs
   std::array<std::unique_ptr<Snake>, 2> snakes;
-  std::array<std::unique_ptr<SDL_Point>, 2> food_nibs{};
+  std::array<std::unique_ptr<SDL_Point>, 2> food_nibs;
 
   std::random_device dev;
   std::mt19937 engine;
@@ -28,6 +28,7 @@ private:
   std::uniform_int_distribution<int> random_h;
 
   std::array<int, 2> scores{{0}};
+  bool is_paused{false};
 
   void MoveSnake(int idx);
   void UpdateSnakeState(int idx);

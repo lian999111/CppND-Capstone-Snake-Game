@@ -29,15 +29,41 @@ Renderer::Renderer(const std::size_t screen_width,
     std::cerr << "Renderer could not be created.\n";
     std::cerr << "SDL_Error: " << SDL_GetError() << "\n";
   }
+
+  // Initialize SDL_TTF
+  if (TTF_Init() == -1) {
+    std::cerr << "SDL_TTF could not initialize.\n";
+    std::cerr << "SDL_TTF Error: " << TTF_GetError() << "\n";
+  }
+
+  // Initialize pause_msg
+  TTF_Font *font = TTF_OpenFont("../font/OpenSans-Regular.ttf", 200);
+  if (nullptr == font) {
+    std::cerr << "SDL Font could not loaded.\n";
+    std::cerr << "TTF_Error: " << TTF_GetError() << "\n";
+  }
+
+  SDL_Color white = {255, 255, 255};
+  SDL_Surface *surface_msg = TTF_RenderText_Solid(font, "Pause", white);
+  pause_msg = SDL_CreateTextureFromSurface(sdl_renderer, surface_msg);
+
+  // We get the message now -> free surface and close font
+  SDL_FreeSurface(surface_msg);
+  TTF_CloseFont(font);
 }
 
 Renderer::~Renderer() {
   SDL_DestroyWindow(sdl_window);
+  SDL_DestroyRenderer(sdl_renderer);
   SDL_Quit();
+
+  SDL_DestroyTexture(pause_msg);
+  TTF_Quit();
 }
 
-void Renderer::Render(const std::array<std::unique_ptr<Snake>, 2> &snakes,
-                      const std::array<std::unique_ptr<SDL_Point>, 2> &food_nibs) {
+void Renderer::Render(
+    const std::array<std::unique_ptr<Snake>, 2> &snakes,
+    const std::array<std::unique_ptr<SDL_Point>, 2> &food_nibs) {
   SDL_Rect block;
   block.w = screen_width / grid_width;
   block.h = screen_height / grid_height;
@@ -102,6 +128,18 @@ void Renderer::Render(const std::array<std::unique_ptr<Snake>, 2> &snakes,
 void Renderer::UpdateWindowTitle(const std::array<int, 2> scores,
                                  const int fps) {
   std::string title{"P1 Score: " + std::to_string(scores[0]) + "  P2 Score: " +
-                    std::to_string(scores[1]) + "  FPS: " + std::to_string(fps)};
+                    std::to_string(scores[1]) + "  FPS: " +
+                    std::to_string(fps)};
   SDL_SetWindowTitle(sdl_window, title.c_str());
+}
+
+void Renderer::RenderPause() {
+    SDL_Rect msg_rect; // create a rect
+    msg_rect.x = 220;  // controls the rect's x coordinate
+    msg_rect.y = 270;  // controls the rect's y coordinte
+    msg_rect.w = 200;  // controls the width of the rect
+    msg_rect.h = 100;  // controls the height of the rect
+
+    SDL_RenderCopy(sdl_renderer, pause_msg, NULL, &msg_rect);
+    SDL_RenderPresent(sdl_renderer);
 }
