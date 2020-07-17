@@ -1,12 +1,14 @@
-# CPPND: Capstone Snake Game Example
+# CPPND: Capstone 2-Player Snake Game
 
-This is a starter repo for the Capstone project in the [Udacity C++ Nanodegree Program](https://www.udacity.com/course/c-plus-plus-nanodegree--nd213). The code for this repo was inspired by [this](https://codereview.stackexchange.com/questions/212296/snake-game-in-c-with-sdl) excellent StackOverflow post and set of responses.
+This project extends the [C++ Nanodegree Capstone Project](https://github.com/udacity/CppND-Capstone-Snake-Game). It is a 2-player snake game where 2 players compete to get higher scores without bumping into themselves or each other.
+
+Keyboard Control Guide:\
+Directions:\
+1P: UP, DOWN, LEFT, RIGHT\
+2P: W, S, A, D\
+Pause: SPACE
 
 <img src="snake_game.gif"/>
-
-The Capstone Project gives you a chance to integrate what you've learned throughout this program. This project will become an important part of your portfolio to share with current and future colleagues and employers.
-
-In this project, you can build your own C++ application or extend this Snake game, following the principles you have learned throughout this Nanodegree Program. This project will demonstrate that you can independently create applications using a wide range of C++ features.
 
 ## Dependencies for Running Locally
 * cmake >= 3.7
@@ -18,6 +20,10 @@ In this project, you can build your own C++ application or extend this Snake gam
 * SDL2 >= 2.0
   * All installation instructions can be found [here](https://wiki.libsdl.org/Installation)
   * Note that for Linux, an `apt` or `apt-get` installation is preferred to building from source.
+* SDL2 TTF >= 2.0
+  * All installation instructions can be found [here](https://www.libsdl.org/projects/SDL_ttf/docs/SDL_ttf.html)
+  * Note that for Linux, an `apt` or `apt-get` installation is preferred to building from source.
+    * e.g. sudo apt-get install libsdl2-dev
 * gcc/g++ >= 5.4
   * Linux: gcc / g++ is installed by default on most Linux distros
   * Mac: same deal as make - [install Xcode command line tools](https://developer.apple.com/xcode/features/)
@@ -29,6 +35,9 @@ In this project, you can build your own C++ application or extend this Snake gam
 2. Make a build directory in the top level directory: `mkdir build && cd build`
 3. Compile: `cmake .. && make`
 4. Run it: `./SnakeGame`.
+
+## Project Structure
+
 
 ## Project Specification
 
