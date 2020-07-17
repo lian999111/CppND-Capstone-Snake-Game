@@ -60,8 +60,6 @@ Responsible for rendering the state of the game. The rendering of the "Pause" me
 ### Game2P: 
 Controls the flow of the game and maintains the 2 snakes and their foods. The "Run()" method runs the game loop, which involves __Input__, __Update__, and __Render__ steps. The __Update__ step first moves the 2 snakes using 2 tasks, then check the necessary updates incurred by the movements again using 2 tasks. 
 
-## Project Specification
-
 ## Rubrics Fulfilled 
 ### Loops, Functions, I/O
 * The project demonstrates an understanding of C++ functions and control structures.
