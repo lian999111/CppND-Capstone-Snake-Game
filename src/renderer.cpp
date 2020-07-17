@@ -50,6 +50,7 @@ Renderer::Renderer(const std::size_t screen_width,
   // We get the message now -> free surface and close font
   SDL_FreeSurface(surface_msg);
   TTF_CloseFont(font);
+  TTF_Quit();
 }
 
 Renderer::~Renderer() {
@@ -58,7 +59,6 @@ Renderer::~Renderer() {
   SDL_Quit();
 
   SDL_DestroyTexture(pause_msg);
-  TTF_Quit();
 }
 
 void Renderer::Render(
