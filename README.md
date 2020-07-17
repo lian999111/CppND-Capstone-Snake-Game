@@ -51,6 +51,9 @@ Maintains the head and body of the snake. The moving and status checking of the 
 ### Controller: 
 Rresponsible for receiving user's input and change the state of the game accrodingly. When the game is in pause mode, it waits for only SPACE to be pressed then continues the game while other key strokes are ignored to avoid state changine during a pause.
 
+### SDLFont:
+An RAII class that manages the acquisition and release of TTF_Font. The font is used to render the "Pause" message.
+
 ### Renderer: 
 Responsible for rendering the state of the game. The rendering of the "Pause" message is achieved using the [SDL2_TTF](https://www.libsdl.org/projects/SDL_ttf/docs/SDL_ttf.html) library.
 
@@ -62,7 +65,7 @@ Controls the flow of the game and maintains the 2 snakes and their foods. The "R
 ## Rubrics Fulfilled 
 ### Loops, Functions, I/O
 * The project demonstrates an understanding of C++ functions and control structures.
-* The project reads data from a file and process the data, or the program writes data to a file. (see [renderer.cpp](https://github.com/lian999111/CppND-Capstone-Snake-Game/blob/master/src/renderer.cpp#L40-L44))
+* The project reads data from a file and process the data, or the program writes data to a file. (see [sdlfont.cpp](https://github.com/lian999111/CppND-Capstone-Snake-Game/blob/master/src/sdlfont.cpp#L12))
 * The project accepts user input and processes the input. (see [controller.h](https://github.com/lian999111/CppND-Capstone-Snake-Game/blob/master/src/controller.h), [controller.cpp](https://github.com/lian999111/CppND-Capstone-Snake-Game/blob/master/src/controller.cpp))
 
 ### Object Oriented Programming
@@ -74,9 +77,10 @@ Controls the flow of the game and maintains the 2 snakes and their foods. The "R
 
 ### Memory Management
 * The project makes use of references in function declarations. (e.g. [snake.cpp](https://github.com/lian999111/CppND-Capstone-Snake-Game/blob/master/src/snake.cpp#L25), [controller.cpp](https://github.com/lian999111/CppND-Capstone-Snake-Game/blob/master/src/controller.cpp#L13-L15))
-* The project uses destructors appropriately. (e.g. [renderer.cpp](https://github.com/lian999111/CppND-Capstone-Snake-Game/blob/master/src/renderer.cpp#L55-L62))
-* The project uses scope / Resource Acquisition Is Initialization (RAII) where appropriate. (see [game2p.h](https://github.com/lian999111/CppND-Capstone-Snake-Game/blob/master/src/game2p.h#L22-L23), [game2p.cpp](https://github.com/lian999111/CppND-Capstone-Snake-Game/blob/master/src/game2p.cpp#L11-L15))
+* The project uses destructors appropriately. (e.g. [renderer.cpp](https://github.com/lian999111/CppND-Capstone-Snake-Game/blob/master/src/renderer.cpp#L41-L47), [sdlfont.cpp](https://github.com/lian999111/CppND-Capstone-Snake-Game/blob/master/src/sdlfont.cpp#L15-L18))
+* The project uses scope / Resource Acquisition Is Initialization (RAII) where appropriate. (e.g. [sdlfont.h](https://github.com/lian999111/CppND-Capstone-Snake-Game/blob/master/src/sdlfont.h), [sdlfont.cpp](https://github.com/lian999111/CppND-Capstone-Snake-Game/blob/master/src/sdlfont.cpp))
 * The project uses smart pointers instead of raw pointers. (see [game2p.h](https://github.com/lian999111/CppND-Capstone-Snake-Game/blob/master/src/game2p.h#L22-L23), [game2p.cpp](https://github.com/lian999111/CppND-Capstone-Snake-Game/blob/master/src/game2p.cpp#L11-L15))
 
 ### Concurrency
-
+* The project uses multithreading. (see [game2p.cpp](https://github.com/lian999111/CppND-Capstone-Snake-Game/blob/master/src/game2p.cpp#L40-L52))
+* A mutex or lock is used in the project. (e.g. [snake.h](https://github.com/lian999111/CppND-Capstone-Snake-Game/blob/master/src/snake.h#L46), [snake.cpp](https://github.com/lian999111/CppND-Capstone-Snake-Game/blob/master/src/snake.cpp#L27-L30))
