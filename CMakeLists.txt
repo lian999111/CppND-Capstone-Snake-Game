@@ -17,6 +17,6 @@ find_package(SDL2TTF REQUIRED)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads)
 
-add_executable(SnakeGame src/main.cpp src/game2p.cpp src/controller.cpp src/renderer.cpp src/snake.cpp)
+add_executable(SnakeGame src/main.cpp src/game2p.cpp src/controller.cpp src/renderer.cpp src/snake.cpp src/sdlfont.cpp)
 string(STRIP ${SDL2_LIBRARIES} SDL2_LIBRARIES)
 target_link_libraries(SnakeGame ${SDL2_LIBRARIES} ${SDL2TTF_LIBRARY} Threads::Threads)

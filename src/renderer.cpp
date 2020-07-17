@@ -6,7 +6,7 @@ Renderer::Renderer(const std::size_t screen_width,
                    const std::size_t screen_height,
                    const std::size_t grid_width, const std::size_t grid_height)
     : screen_width(screen_width), screen_height(screen_height),
-      grid_width(grid_width), grid_height(grid_height) {
+      grid_width(grid_width), grid_height(grid_height), sdl_font("../font/OpenSans-Regular.ttf", 200) {
   // Initialize SDL
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
     std::cerr << "SDL could not initialize.\n";
@@ -30,27 +30,12 @@ Renderer::Renderer(const std::size_t screen_width,
     std::cerr << "SDL_Error: " << SDL_GetError() << "\n";
   }
 
-  // Initialize SDL_TTF
-  if (TTF_Init() == -1) {
-    std::cerr << "SDL_TTF could not initialize.\n";
-    std::cerr << "SDL_TTF Error: " << TTF_GetError() << "\n";
-  }
-
-  // Initialize pause_msg
-  TTF_Font *font = TTF_OpenFont("../font/OpenSans-Regular.ttf", 200);
-  if (nullptr == font) {
-    std::cerr << "SDL Font could not be loaded.\n";
-    std::cerr << "TTF_Error: " << TTF_GetError() << "\n";
-  }
-
   SDL_Color white = {255, 255, 255};
-  SDL_Surface *surface_msg = TTF_RenderText_Solid(font, "Pause", white);
+  SDL_Surface *surface_msg = TTF_RenderText_Solid(sdl_font.Get(), "Pause", white);
   pause_msg = SDL_CreateTextureFromSurface(sdl_renderer, surface_msg);
 
-  // We get the message now -> free surface and close font
+  // We get the message now -> free surface
   SDL_FreeSurface(surface_msg);
-  TTF_CloseFont(font);
-  TTF_Quit();
 }
 
 Renderer::~Renderer() {

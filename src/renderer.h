@@ -4,6 +4,7 @@
 #include "SDL.h"
 #include "SDL_ttf.h"
 #include "snake.h"
+#include "sdlfont.h"
 #include <array>
 #include <memory>
 
@@ -22,7 +23,7 @@ private:
   SDL_Window *sdl_window;
   SDL_Renderer *sdl_renderer;
 
-  TTF_Font *font;
+  SDLFont sdl_font;
   SDL_Surface *surface_msg;
   SDL_Texture *pause_msg;
 
