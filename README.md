@@ -1,12 +1,20 @@
 # CPPND: Capstone 2-Player Snake Game
 
-This project extends the [C++ Nanodegree Capstone Project](https://github.com/udacity/CppND-Capstone-Snake-Game). It is a 2-player snake game where 2 players compete to get higher scores without bumping into themselves or each other.
+This project extends the [C++ Nanodegree Capstone Project](https://github.com/udacity/CppND-Capstone-Snake-Game). It is a 2-player snake game where 2 players compete to get higher scores without bumping into themselves or each other. The blue snake shall go after the blue food and the orange snake shall go after the orange food.
 
-Keyboard Control Guide:\
-Directions:\
-1P: UP, DOWN, LEFT, RIGHT\
-2P: W, S, A, D\
-Pause: SPACE
+## Keyboard Control Guide:
+| Key             | Action                                  | 
+| :-------------: |:----------------------------------------|
+| Up              | 1P goes up                              |
+| Down            | 1P goes down                            |
+| Left            | 1P goes left                            |
+| Right           | 1P goes right                           | 
+| W               | 2P goes up                              |
+| S               | 2P goes down                            |
+| A               | 2P goes left                            |
+| D               | 2P goes right                           | 
+| SPACE           | Pause the game                          |
+
 
 <img src="snake_game.gif"/>
 
@@ -36,33 +44,30 @@ Pause: SPACE
 3. Compile: `cmake .. && make`
 4. Run it: `./SnakeGame`.
 
-## Project Structure
+## Project Class Structure
+### Snake: 
+Maintains the head and body of the snake. The moving and status checking of the snake are separated into different methods to decouple the behaviors. It uses std::mutex to be thread-safe since different threads in Game2P may be updating and checking the status of the snake at the same time. 
 
+### Controller: 
+Rresponsible for receiving user's input and change the state of the game accrodingly. When the game is in pause mode, it waits for only SPACE to be pressed then continues the game while other key strokes are ignored to avoid state changine during a pause.
+
+### Renderer: 
+Responsible for rendering the state of the game. The rendering of the "Pause" message is achieved using the [SDL2_TTF](https://www.libsdl.org/projects/SDL_ttf/docs/SDL_ttf.html) library.
+
+### Game2P: 
+Controls the flow of the game and maintains the 2 snakes and their foods. The "Run()" method runs the game loop, which involves __Input__, __Update__, and __Render__ steps. The __Update__ step first moves the 2 snakes using 2 tasks, then check the necessary updates incurred by the movements again using 2 tasks. 
 
 ## Project Specification
 
-### README (All Rubric Points REQUIRED)
-
-| _Done_  	| _Criteria_                                                           	| _Meets Specifications_                                                                                                                                                                                                                                                           	            |
-|:-------:	|:---------------------------------------------------------------------	|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------	|         
-| &#9745; 	| A `README` with instructions is included with the project            	| The README is included with the project and has instructions for building/running the project. <br><br>If any additional libraries are needed to run the project, these are indicated with cross-platform installation instructions.<br><br>You can submit your writeup as markdown or pdf. 	|
-| &#9745; 	| The `README` indicates which project is chosen.                      	| The `README` describes the project you have built.<br><br>The `README` also indicates the file and class structure, along with the expected behavior or output of the program.                                                                                                        	    |
-| &#9745; 	| The `README` includes information about each rubric point addressed. 	| The `README` indicates which rubric points are addressed. The `README` also indicates where in the code (i.e. files and line numbers) that the rubric points are addressed.                                                                                                      	            |
-
-
-### Compiling and Testing (All Rubric Points REQUIRED)
-
-| _Done_  	| _Criteria_                           	| _Meets Specifications_                                                                                                                                                                                                         	|
-|:-------:	|:-------------------------------------	|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------	|
-| &#9745; 	| The submission must compile and run. 	| The project code must compile and run without errors.  We strongly recommend using  `cmake` and  `make`, as provided in the starter repos. If you choose another build system, the code must compile on any reviewer platform. 	|
-
-
+## Rubrics Fulfilled 
 ### Loops, Functions, I/O
+* The project demonstrates an understanding of C++ functions and control structures.
+* The project reads data from a file and process the data, or the program writes data to a file. (see line 40 in [renderer.cpp](https://github.com/lian999111/CppND-Capstone-Snake-Game/blob/master/src/renderer.cpp))
 
 | _Done_  	| _Criteria_                                                                                     	| _Meets Specifications_                                                                                                   	| 
 |:-------:	|:-----------------------------------------------------------------------------------------------	|:-------------------------------------------------------------------------------------------------------------------------	|
 | &#9745; 	| The project demonstrates an understanding of C++ functions and control structures.             	| A variety of control structures are used in the project.<br><br>The project code is clearly organized into functions.     | 
-| &#9745; 	| The project reads data from a file and process the data, or the program writes data to a file. 	| The project reads data from an external file or writes data to a file as part of the necessary operation of the program. 	|                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+| &#9745; 	| The project reads data from a file and process the data, or the program writes data to a file. 	| The project reads data from an external file or writes data to a file as part of the necessary operation of the program. (see line 40) 	|
 | &#9745; 	| The project accepts user input and processes the input.                                        	| The project accepts input from a user as part of the necessary operation of the program.                                 	| 
 
 
